@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js"><span id='node_modules-authorify_client-mixin-WithContent'>/**
+</span> * A mixin class with useful properties.
+ *
+ * @class node_modules.authorify_client.mixin.WithContent
+ * @inheritable
+ *
+ * @author Marcello Gesmundo
+ *
+ * # License
+ *
+ * Copyright (c) 2012-2014 Yoovant by Marcello Gesmundo. All rights reserved.
+ *
+ * This program is released under a GNU Affero General Public License version 3 or above, which in summary means:
+ *
+ * - You __can use__ this program for __no cost__.
+ * - You __can use__ this program for __both personal and commercial reasons__.
+ * - You __do not have to share your own program's code__ which uses this program.
+ * - You __have to share modifications__ (e.g bug-fixes) you've made to this program.
+ *
+ * For more convoluted language, see the LICENSE file.
+ *
+ */
+module.exports = function(app) {
+  'use strict';
+
+  var _      = app._,
+      forge  = app.config.crypto,
+      Class  = app.jsface.Class,
+      SECRET = app.config.SECRET,
+      errors = app.errors;
+
+  var CError = errors.InternalError;
+
+  return Class({
+<span id='node_modules-authorify_client-mixin-WithContent-method-setDate'>    /**
+</span>     * Set the date
+     * @param {Date/Integer} date The date as date or number of milliseconds. The date is anyhow saved as integer.
+     */
+    setDate: function(date) {
+      if (_.isDate(date)) {
+        this._date = date.toSerialNumber();
+      } else if (_.isNumber(date)) {
+        this._date = date;
+      } else {
+        throw new CError('wrong date type').log();
+      }
+    },
+<span id='node_modules-authorify_client-mixin-WithContent-method-getDate'>    /**
+</span>     * Get the date
+     * @return {Integer} The date in milliseconds
+     */
+    getDate: function() {
+      return this._date;
+    },
+<span id='node_modules-authorify_client-mixin-WithContent-method-setToken'>    /**
+</span>     * Set the token
+     * @param {String} token The token in Base64 format
+     */
+    setToken: function(token) {
+      if (token) {
+        if (token.isBase64()) {
+          this._token = token;
+        } else {
+          throw new CError('token not valid').log();
+        }
+      }
+    },
+<span id='node_modules-authorify_client-mixin-WithContent-method-getToken'>    /**
+</span>     * Get the token
+     * @return {String} The token in Base64 format
+     */
+    getToken: function() {
+      return this._token;
+    },
+<span id='node_modules-authorify_client-mixin-WithContent-method-setId'>    /**
+</span>     * Set the id if the client
+     * @param {String} id The id of the client as uuid string
+     */
+    setId: function(id) {
+      if (id) {
+        if (id.isUuid()) {
+          this._id = id;
+        } else {
+          throw new CError('id not valid').log();
+        }
+      }
+    },
+<span id='node_modules-authorify_client-mixin-WithContent-method-getId'>    /**
+</span>     * Get the id of the client
+     * @return {String} The id of the client as uuid string
+     */
+    getId: function() {
+      return this._id;
+    },
+<span id='node_modules-authorify_client-mixin-WithContent-method-setApp'>    /**
+</span>     * Set the app used by the client
+     * @param {String} app The app used by the client as uuid string
+     */
+    setApp: function(app) {
+      if (app) {
+        if (app.isUuid()) {
+          this._app = app;
+        } else {
+          throw new CError('app not valid').log();
+        }
+      }
+    },
+<span id='node_modules-authorify_client-mixin-WithContent-method-getApp'>    /**
+</span>     * Get the app used by the client
+     * @return {String} The app used by the client as uuid string
+     */
+    getApp: function() {
+      return this._app;
+    },
+<span id='node_modules-authorify_client-mixin-WithContent-method-setUsername'>    /**
+</span>     * Set the username for interactive login
+     * @param {String} username The username for the login
+     */
+    setUsername: function(username) {
+      if (username) {
+        this._username = username;
+      }
+    },
+<span id='node_modules-authorify_client-mixin-WithContent-method-getUsername'>    /**
+</span>     * Get the username
+     * @return {String} The username for the login
+     */
+    getUsername: function() {
+      return this._username;
+    },
+<span id='node_modules-authorify_client-mixin-WithContent-method-setPassword'>    /**
+</span>     * Set the password for interactive login
+     * @param {String} password The password for the login
+     */
+    setPassword: function(password) {
+      // empty password not allowed
+      if (password) {
+        var hmac = forge.hmac.create();
+        hmac.start('sha256', SECRET);
+        hmac.update(password);
+        this._password = password;
+        this._passwordHash = hmac.digest().toHex();
+      }
+    },
+<span id='node_modules-authorify_client-mixin-WithContent-method-getPassword'>    /**
+</span>     * Get the password
+     * @return {String} The password for the login
+     */
+    getPassword: function() {
+      return this._password;
+    },
+<span id='node_modules-authorify_client-mixin-WithContent-method-verifyPassword'>    /**
+</span>     * Verify the password
+     * @param {String} password The password to verify
+     * @return {Boolean} True if the password match the password used in login phase (the verify is based on SHA256 digest)
+     */
+    verifyPassword: function(password) {
+      if (password) {
+        var hmac = forge.hmac.create();
+        hmac.start('sha256', SECRET);
+        hmac.update(password);
+        return hmac.digest().toHex() === this._passwordHash;
+      }
+      return false;
+    }
+  });
+};</pre>
+</body>
+</html>
