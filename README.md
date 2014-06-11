@@ -141,6 +141,7 @@ You __can use__ this program for __no cost__.
 You __can use__ this program for __both personal and commercial reasons__.
 You __do not have to share your own program's code__ which uses this program.
 You __have to share modifications__ (e.g bug-fixes) you've made to this program.
+
 For more convoluted language, see the LICENSE file.
 
 
